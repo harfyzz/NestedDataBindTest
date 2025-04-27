@@ -16,18 +16,22 @@ struct ContentView: View {
     @State var meter2Value:Float = 75
     @State var meter3Name = "Meter 3"
     @State var meter3Value:Float = 80
+    @State var showImage = true
     var body: some View {
         VStack {
             chartView.view()
             VStack{
-                Image(systemName: "globe")
-                    .imageScale(.large)
-                    .foregroundStyle(.tint)
+                if showImage{
+                    Image(systemName: "globe")
+                        .imageScale(.large)
+                        .foregroundStyle(.tint)
+                }
                 Text("Hello, world!")
             }
             .background(Color.gray)
             .onTapGesture {
                 meter1Name = "It's changed now"
+                meter1Value = 25
                 changeBoundObjects()
                 print(meter1Name)
             }
@@ -52,11 +56,16 @@ struct ContentView: View {
         let speedRawName1 = chartInstance?
             .viewModelInstanceProperty(fromPath: "Speed sub-VM")?.stringProperty(fromPath: "Chart name")
         speedRawName1?.value = meter1Name
+       
         
         let speedRawValue1 = chartInstance?
             .viewModelInstanceProperty(fromPath: "Speed sub-VM")?.numberProperty(fromPath: "trim value")
         speedRawValue1?.value = meter1Value
-        
+        let listener = speedRawValue1?.addListener({ newValue in
+            if newValue == 25 {
+                showImage = false
+            }
+        })
         let speedRawName2 = chartInstance?
             .viewModelInstanceProperty(fromPath: "Fuel sub-VM")?.stringProperty(fromPath: "Chart name")
         speedRawName2?.value = meter2Name
